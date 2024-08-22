@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}Finances{% endblock %}
+
+{% block body %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Cause of spending/earning</th>
+                <th scope="col">Earning/Spending</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Time of Entry</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in log %}
+                {% if entry["effect"] == "Earning" %}
+                <tr>
+                    <td class="table-success" scope="col">{{entry["cause"]}}</td>
+                    <td class="table-success" scope="col">{{entry["effect"]}}</td>
+                    <td class="table-success" scope="col">{{entry["amount"]}}</td>
+                    <td class="table-success" scope="col">{{entry["time"]}}</td>
+                    <td scope="col">
+                        <form action="/delete" method="post">
+                            <button name="transaction_id" value="{{ entry['transaction_id'] }}" type="submit" class="btn btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td class="table-danger" scope="col">{{entry["cause"]}}</td>
+                    <td class="table-danger" scope="col">{{entry["effect"]}}</td>
+                    <td class="table-danger" scope="col">{{entry["amount"]}}</td>
+                    <td class="table-danger" scope="col">{{entry["time"]}}</td>
+                    <td scope="col">
+                        <form action="/delete" method="post">
+                            <button name="transaction_id" value="{{ entry['transaction_id'] }}" type="submit" class="btn btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td><a href="/add-entry"><button type="button" class="btn btn-outline-primary">Add an Entry</button></a></td>
+            </tr>
+        </tfoot>
+    </table>
+{% endblock %}

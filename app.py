@@ -1,4 +1,5 @@
 from crypt import methods
+from datetime import datetime
 import os
 
 from cs50 import SQL
@@ -89,7 +90,46 @@ def feed():
 
 @app.route("/finances")
 def finances():
-    pass
+    # Get persons finance history and format it then display on page
+    log = db.execute("SELECT * FROM finance WHERE person_id=?;", session["user_id"])
+    for entry in log:
+        entry["amount"] = usd(entry["amount"])
+    return render_template("finance.html",log=log)
+
+@app.route("/delete", methods=["POST"])
+def delete():
+    # Remove transaction from database
+    transaction_id = request.form.get("transaction_id")
+    db.execute("DELETE FROM finance WHERE transaction_id=?", transaction_id)
+    return redirect("/finances")
+
+@app.route("/add-entry", methods=["GET", "POST"])
+def add_entry():
+    if request.method == "POST":
+        methods = ["Earning", "Spending"]
+        cause = request.form.get("cause")
+        effect = request.form.get("effect")
+        # Verify user inputs
+        if effect not in methods:
+            return "Please select a valid option"
+        try:
+            amount = int(request.form.get("amount"))
+        except TypeError:
+            return "Please enter a valid amount"
+        time = datetime.now()
+
+        if cause == "":
+            return "Please fill out cause field!"
+        elif effect == "":
+            return "Please select one of the options!"
+        elif int(amount) < 0:
+            return "Please input a valid amount"
+        
+        # Add user input to database
+        db.execute("INSERT INTO finance (person_id, cause, amount, time, effect) VALUES(?,?,?,?,?);",session["user_id"], cause, amount, time, effect)
+        return redirect("/finances")
+    else:
+        return render_template("add-entry.html")
 
 @app.route("/link_email")
 def link_email():
