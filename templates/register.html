@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <title>FinMan: Login</title>
+    <title>FinMan: Register</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -15,10 +15,11 @@
                 </li>
             </ul>
     </nav>
-    <form method="post" action="/login">
+    <form method="post" action="/register">
         <input type="text" autocomplete="off" autofocus name="username" placeholder="Username..." required>
         <input type="password" autocomplete="off" name="password" placeholder="Password..." required>
-        <button type="submit">Login</button>
+        <input type="password" autocomplete="off" name="check_password" placeholder="Password..." required>
+        <button type="submit">Register</button>
     </form>
 </body>
 </html>
