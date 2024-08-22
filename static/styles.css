@@ -1,0 +1,25 @@
+.form {
+    margin: 0 auto;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    background-image: linear-gradient(to right, #454040, #3f3e6e, #2e2c87);
+}
+
+.form_element {
+    margin: 5px;
+}
+
+.nav-link {
+    color: aliceblue;
+}
+.nav-link:hover{
+    color: #676b6f;
+}
+.nav-link:active {
+    color: azure;
+}
+
