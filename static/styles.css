@@ -23,3 +23,14 @@
     color: azure;
 }
 
+.navbar-head{
+    font-size: larger;
+    font-weight: bold;
+    color: #bed1e5;
+  }
+.navbar-head:hover{
+    font-size: larger;
+    font-weight: bold;
+    color: #bed1e5;
+    text-decoration: none;
+}
