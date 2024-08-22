@@ -40,3 +40,27 @@
 .nav-item {
     display: flex;
 }
+
+.links {
+    display: flex;
+    width: min-content;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 auto;
+}
+
+.btn {
+    margin: 5px 0;
+}
+
+#home {
+    height: 100vh;
+    background-image: linear-gradient(to right, #c68989, #6c6cd1, #5c725c);
+    color: #3f3e6e;
+}
+
+#quote {
+    text-align: center;
+    padding: 10px;
+    color: #2a2a2a;
+}

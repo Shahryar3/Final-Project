@@ -28,6 +28,7 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+# Allow user to Login
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
@@ -39,13 +40,15 @@ def login():
             )
         except Exception:
             return "Incorrect Username"
-        
+        # Verify that the username is valid
         if len(rows) == 0:
             return "Incorrect Username"
         hash = rows[0]["hash"]
 
+        # Verify that the password is correct
         if check_password_hash(hash, password) == False:
-            return "Incorrect Password"            
+            return "Incorrect Password"
+        # Log person in and get id in session["user_id"]            
         else:
             session["user_id"] = rows[0]["id"]
             return redirect("/")
@@ -57,6 +60,7 @@ def register():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        # Verify user inputs
         if username == "":
             return "Please enter a username"
         elif len(password) < 8:
@@ -65,6 +69,7 @@ def register():
             return "The two passwords do not match!"
         elif len(db.execute("SELECT username FROM users WHERE username=?;", username)) > 0:
             return "Username already exists"
+        # Add user information to Database
         else:
             password = generate_password_hash(password)
             db.execute("INSERT INTO users (username, hash) VALUES(?, ?);", username, password)
@@ -72,10 +77,11 @@ def register():
     else:
         return render_template("register.html")
     
-@app.route("/", methods=["GET", "POST"])
+@app.route("/",)
 @login_required
 def home():
-    return render_template("home.html")
+    username = db.execute("SELECT username FROM users WHERE id=?;", session["user_id"])[0]["username"]
+    return render_template("home.html", name=username)
 
 @app.route("/feed")
 def feed():
@@ -89,6 +95,7 @@ def finances():
 def link_email():
     pass
 
+# Add Log out Functionality
 @app.route("/logout")
 def logout():
     session.clear()

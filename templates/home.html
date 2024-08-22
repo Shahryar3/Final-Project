@@ -1,3 +1,15 @@
 {% extends "layout.html" %}
 
-{% block title %}Home{% endblock %} 
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <div id="home">
+        <h2>Good Day, {{name}}!</h2>
+        <div class="links">
+            <a href="/feed"><button class="btn btn-outline-dark">Make a Post</button></a>
+            <a href="/finances"><button class="btn btn-outline-dark">Check or update your finances</button></a>
+            <a href="/stocks"><button class="btn btn-outline-dark">Check Some stocks</button></a>
+        </div>
+        <div id="quote"><em><h3>“Don't worry about failure; you only have to be right once.” ~ Drew Houston</h3></em></div>
+    </div>
+{% endblock %}
