@@ -76,3 +76,21 @@ def register():
 @login_required
 def home():
     return render_template("home.html")
+
+@app.route("/feed")
+def feed():
+    pass
+
+@app.route("/finances")
+def finances():
+    pass
+
+@app.route("/link_email")
+def link_email():
+    pass
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+

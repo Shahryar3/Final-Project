@@ -27,10 +27,16 @@
     font-size: larger;
     font-weight: bold;
     color: #bed1e5;
+    text-align: center;
+    padding-top: 4px;
   }
 .navbar-head:hover{
     font-size: larger;
     font-weight: bold;
     color: #bed1e5;
     text-decoration: none;
+}
+
+.nav-item {
+    display: flex;
 }

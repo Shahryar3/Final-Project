@@ -4,9 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinMan: {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="static/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
+    <nav class="navbar navbar-light" style="background-color: #283875;">
+        <ul class="nav justify-content-left">
+            <a class="navbar-head" href="/">FinMan</a>
+            <li class="nav-item">
+                <a class="nav-link" href="/feed">Feed</a>
+                <a class="nav-link" href="/finances">Your Finances</a>
+                <a class="nav-link" href="/stocks">Stocks</a>
+            </li>
+        </ul>
+            <ul class="nav justify-content-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/link_email">Link Email</a>
+                    <a class="nav-link" href="/logout">Log Out</a>
+                </li>
+            </ul>
+        </nav>
     {% block body %}{% endblock %}
 </body>
 </html>
