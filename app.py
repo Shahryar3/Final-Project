@@ -30,19 +30,49 @@ def after_request(response):
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
-    if request.method == "Post":
-        pass
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        try:
+            rows = db.execute(
+                "SELECT * FROM users WHERE username = ?", request.form.get("username")
+            )
+        except Exception:
+            return "Incorrect Username"
+        
+        if len(rows) == 0:
+            return "Incorrect Username"
+        hash = rows[0]["hash"]
+
+        if check_password_hash(hash, password) == False:
+            return "Incorrect Password"            
+        else:
+            session["user_id"] = rows[0]["id"]
+            return redirect("/")
     else:
         return render_template("login.html")
     
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        pass
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username == "":
+            return "Please enter a username"
+        elif len(password) < 8:
+            return "Password must be atleast 8 characters long"
+        elif password != request.form.get("check_password"):
+            return "The two passwords do not match!"
+        elif len(db.execute("SELECT username FROM users WHERE username=?;", username)) > 0:
+            return "Username already exists"
+        else:
+            password = generate_password_hash(password)
+            db.execute("INSERT INTO users (username, hash) VALUES(?, ?);", username, password)
+            return redirect("/")
     else:
         return render_template("register.html")
     
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def home():
-    render_template("home.html")
+    return render_template("home.html")

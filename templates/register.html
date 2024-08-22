@@ -19,8 +19,8 @@
     <div class="form">
         <form method="post" action="/register">
             <input class="form_element form-control" type="text" autocomplete="off" autofocus name="username" placeholder="Username..." required>
-            <input class="form_element form-control" type="password" autocomplete="off" name="password" placeholder="Password..." required>
-            <input class="form_element form-control" type="password" autocomplete="off" name="check_password" placeholder="Re-enter Password..." required>
+            <input class="form_element form-control" type="password" minlength="8" autocomplete="off" name="password" placeholder="Password..." required>
+            <input class="form_element form-control" type="password" minlength="8" autocomplete="off" name="check_password" placeholder="Re-enter Password..." required>
             <button class="form_element btn btn-outline-primary"  type="submit">Register</button>
         </form>
     </div>
