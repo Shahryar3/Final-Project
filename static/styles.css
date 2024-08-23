@@ -68,3 +68,33 @@
 .form-group {
     padding: 10px;
 }
+
+.post {
+    width: 100%;
+    background-color: #9bc36d76;
+    color: #1c3255;
+}
+
+.posts {
+    display: flexbox;
+    justify-content: center;
+}
+
+.username {
+    color:#074229;
+    background-color: #bad3dca3;
+    height: auto;
+}
+
+.like {
+    display: flex;
+    align-items: center;
+}
+
+h6 {
+    padding: 0 2%;
+}
+
+.make_post {
+    display: block;
+}

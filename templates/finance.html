@@ -21,7 +21,7 @@
                     <td class="table-success" scope="col">{{entry["effect"]}}</td>
                     <td class="table-success" scope="col">{{entry["amount"]}}</td>
                     <td class="table-success" scope="col">{{entry["time"]}}</td>
-                    <td scope="col">
+                    <td scope="col" class="table-success">
                         <form action="/delete" method="post">
                             <button name="transaction_id" value="{{ entry['transaction_id'] }}" type="submit" class="btn btn-outline-danger">Delete</button>
                         </form>
@@ -33,7 +33,7 @@
                     <td class="table-danger" scope="col">{{entry["effect"]}}</td>
                     <td class="table-danger" scope="col">{{entry["amount"]}}</td>
                     <td class="table-danger" scope="col">{{entry["time"]}}</td>
-                    <td scope="col">
+                    <td scope="col" class="table-danger">
                         <form action="/delete" method="post">
                             <button name="transaction_id" value="{{ entry['transaction_id'] }}" type="submit" class="btn btn-outline-danger">Delete</button>
                         </form>

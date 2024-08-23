@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}Your Feed{% endblock %}
+
+{% block body %}
+    <div class="posts">
+        <div class="make_post">
+            <a href="/make-post"><button class="btn btn-outline-primary btn-lg btn-block">Post</button></a>
+        </div>
+        {% for post in posts %}
+            <div class="post">
+                <div class="username"><h4>@{{post["username"]}}</h4></div>
+                <h6>{{post["post"]}}</h6>
+                <p>Posted at {{post["time"]}}</p>
+                <form action="/feed" method="post" class="like">
+                    <button type="submit" name="like" value="{{post['num']}}" class="btn btn-outline-primary">Like</button>
+                    <h6>{{post["likes"]}} likes</h6>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

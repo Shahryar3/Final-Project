@@ -89,10 +89,35 @@ def home():
     username = db.execute("SELECT username FROM users WHERE id=?;", session["user_id"])[0]["username"]
     return render_template("home.html", name=username)
 
-@app.route("/feed")
+@app.route("/feed", methods=["GET", "POST"])
 @login_required
 def feed():
-    pass
+    if request.method == "POST":
+        post = request.form.get("like")
+        try:
+            db.execute("INSERT INTO liked (person_id,post_id) VALUES(?,?);", session["user_id"], post)
+        except Exception:
+            return "Already liked this post"
+        likes = db.execute("SELECT likes FROM posts WHERE id=?", post)[0]["likes"]
+        likes += 1
+        print(likes)
+        db.execute("UPDATE posts SET likes=? WHERE id=?", likes, post)
+        return redirect("/feed")
+    else:
+        posts = db.execute("SELECT posts.id as num,likes,post,time,username FROM posts,users WHERE posts.poster_id=users.id ORDER BY time,likes;")
+        return render_template("feed.html", posts=posts)
+    
+@app.route("/make-post", methods=["GET", "POST"])
+@login_required
+def post():
+    if request.method=="POST":
+        text = request.form.get("post")
+        if text == "None":
+            return "Please type a valid post" 
+        db.execute("INSERT INTO posts (poster_id, post, time) VALUES(?,?,?);", session["user_id"], text, datetime.now())
+        return redirect("/feed")
+    else:
+        return render_template("post.html")
 
 # Display User's Finance History
 @app.route("/finances")

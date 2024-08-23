@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}Make a Post{% endblock %}
+
+{% block body %}
+    <form action="/make-post" method="post">
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Your Post:</label>
+            <textarea name="post" placeholder="Your thoughts..." required class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-outline-primary btn-lg btn-block">Post</button>
+        </div>
+    </form>
+{% endblock %}
