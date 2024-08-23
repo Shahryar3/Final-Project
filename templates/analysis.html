@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block title %}Finances{% endblock %}
+
+{% block body %}
+  <link rel="stylesheet" href="static/charts.css">
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/data.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  <figure class="highcharts-figure">
+    <table id="datatable" class="table table-hover">
+      <thead>
+        <tr>
+          <th> </th>
+            {% for month in months %}
+              <th> {{month}} </th>
+            {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <td> </td>
+      {% for month in months %}
+        <td> {{data[month]}} </td>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div id="container"></div>
+  </figure>
+  <table>
+    <tr>
+      <td><a href="/weekly-analysis"><button class="btn btn-outline-primary">A Week's</button></a></td>
+      <td><a href="/analytics"><button class="btn btn-outline-primary">Monthly</button></a></td>
+      <td><a href="/yearly-analysis"><button class="btn btn-outline-primary">Yearly</button></a></td>
+    </tr>
+  </table>
+
+  <script>
+    Highcharts.chart('container', {
+    data: {
+        table: 'datatable'
+    },
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: '{{time}} Analysis'
+    },
+    xAxis: {
+        type: 'category'
+    },
+    yAxis: {
+        allowDecimals: false,
+        title: {
+            text: 'Amount'
+        }
+    }
+});
+  </script>
+
+{% endblock %}

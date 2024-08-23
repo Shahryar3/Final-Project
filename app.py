@@ -1,9 +1,10 @@
+from calendar import month
 from crypt import methods
 from datetime import datetime
 import os
 
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -11,6 +12,8 @@ from helpers import *
 
 # Configure application
 app = Flask(__name__)
+
+app.jinja_env.filters['jsonify'] = jsonify
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
@@ -55,7 +58,8 @@ def login():
             return redirect("/")
     else:
         return render_template("login.html")
-    
+
+# Allow users to Register for an Account
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -77,7 +81,8 @@ def register():
             return redirect("/")
     else:
         return render_template("register.html")
-    
+
+# Displays Home page   
 @app.route("/",)
 @login_required
 def home():
@@ -85,10 +90,13 @@ def home():
     return render_template("home.html", name=username)
 
 @app.route("/feed")
+@login_required
 def feed():
     pass
 
+# Display User's Finance History
 @app.route("/finances")
+@login_required
 def finances():
     # Get persons finance history and format it then display on page
     log = db.execute("SELECT * FROM finance WHERE person_id=?;", session["user_id"])
@@ -96,14 +104,83 @@ def finances():
         entry["amount"] = usd(entry["amount"])
     return render_template("finance.html",log=log)
 
+# Delete an input from the table
 @app.route("/delete", methods=["POST"])
+@login_required
 def delete():
     # Remove transaction from database
     transaction_id = request.form.get("transaction_id")
     db.execute("DELETE FROM finance WHERE transaction_id=?", transaction_id)
     return redirect("/finances")
 
+# Display a Bar chart showing the person's financial progress over a month
+@app.route("/analytics")
+@login_required
+def analytics():
+    log = db.execute("SELECT * FROM finance WHERE person_id=? ORDER BY time;", session["user_id"])
+    months = []
+    data = {}
+    for entry in log:
+        # Get name of month and add it to a dictionary if new
+        month = datetime.strptime(entry["time"], "%Y-%m-%d %H:%M:%S")
+        month = month.strftime("%B")
+        if entry["effect"] == "Spending":
+            entry["amount"] *= -1
+        if month not in months:
+            months.append(month)
+            data[month] = 0
+        # Calculate Earnings
+        data[month] += int(entry["amount"])
+    return render_template("analysis.html", months=months, data=data, time="Monthly")
+
+# Display a Bar chart showing the person's financial progress over an year
+@app.route("/yearly-analysis")
+@login_required
+def yearly_anaylysis():
+    log = db.execute("SELECT * FROM finance WHERE person_id=? ORDER BY time;", session["user_id"])
+    years = []
+    data = {}
+
+    for entry in log:
+        # Get unique years and add to dictionary
+        year = datetime.strptime(entry["time"], "%Y-%m-%d %H:%M:%S").strftime("%Y")
+        if entry["effect"] == "Spending":
+            entry["amount"] *= -1
+        if year not in years:
+            years.append(year)
+            data[year] = 0
+        # Calculate yearly profit/loss
+        data[year] += entry["amount"]
+    
+    return render_template("analysis.html", months=years, data=data, time="Yearly")
+
+@app.route("/weekly-analysis")
+@login_required
+# Display a Bar chart showing the person's financial progress over last 7 days of user's activity
+def weekly_analysis():
+    log = db.execute("SELECT * FROM finance WHERE person_id=? ORDER BY time;", session["user_id"])
+    days = []
+    data = {}
+
+    for entry in log:
+        # Get dates and add them to a dictionary
+        day = datetime.strptime(entry["time"], "%Y-%m-%d %H:%M:%S").strftime("%d'th of %B")
+        if entry["effect"] == "Spending":
+            entry["amount"] *= -1
+        if day not in days:
+            days.append(day)
+            data[day] = 0
+        # Calculate profit/loss of that day
+        data[day] += entry["amount"]
+        # Ensure only 7 days are counted
+        if len(days) == 8:
+            days.pop
+            break
+    return render_template("analysis.html", months=days, data=data, time="7 Most Recent Day's")    
+
+# Allow user to input their financial activity
 @app.route("/add-entry", methods=["GET", "POST"])
+@login_required
 def add_entry():
     if request.method == "POST":
         methods = ["Earning", "Spending"]
@@ -132,11 +209,13 @@ def add_entry():
         return render_template("add-entry.html")
 
 @app.route("/link_email")
+@login_required
 def link_email():
     pass
 
 # Add Log out Functionality
 @app.route("/logout")
+@login_required
 def logout():
     session.clear()
     return redirect("/")
