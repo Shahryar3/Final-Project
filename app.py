@@ -99,7 +99,7 @@ def feed():
 @login_required
 def finances():
     # Get persons finance history and format it then display on page
-    log = db.execute("SELECT * FROM finance WHERE person_id=?;", session["user_id"])
+    log = db.execute("SELECT * FROM finance WHERE person_id=? ORDER BY time DESC;", session["user_id"])
     for entry in log:
         entry["amount"] = usd(entry["amount"])
     return render_template("finance.html",log=log)
@@ -119,18 +119,21 @@ def delete():
 def analytics():
     log = db.execute("SELECT * FROM finance WHERE person_id=? ORDER BY time;", session["user_id"])
     months = []
+    years = [datetime.now().strftime("%Y")]
     data = {}
     for entry in log:
         # Get name of month and add it to a dictionary if new
         month = datetime.strptime(entry["time"], "%Y-%m-%d %H:%M:%S")
+        year = month.strftime("%Y")
         month = month.strftime("%B")
         if entry["effect"] == "Spending":
             entry["amount"] *= -1
-        if month not in months:
+        if (month not in months) and (year in years):
             months.append(month)
             data[month] = 0
         # Calculate Earnings
-        data[month] += int(entry["amount"])
+        if (month in months) and (year in years):
+            data[month] += int(entry["amount"])
     return render_template("analysis.html", months=months, data=data, time="Monthly")
 
 # Display a Bar chart showing the person's financial progress over an year
