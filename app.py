@@ -2,6 +2,7 @@ from calendar import month
 from crypt import methods
 from datetime import datetime
 import os
+from random import randrange
 
 from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session, jsonify
@@ -66,7 +67,7 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
         # Verify user inputs
-        if username == "":
+        if username == "None":
             return "Please enter a username"
         elif len(password) < 8:
             return "Password must be atleast 8 characters long"
@@ -89,6 +90,7 @@ def home():
     username = db.execute("SELECT username FROM users WHERE id=?;", session["user_id"])[0]["username"]
     return render_template("home.html", name=username)
 
+# Displays posts
 @app.route("/feed", methods=["GET", "POST"])
 @login_required
 def feed():
@@ -98,25 +100,30 @@ def feed():
             db.execute("INSERT INTO liked (person_id,post_id) VALUES(?,?);", session["user_id"], post)
         except Exception:
             return "Already liked this post"
+        # Increases lieks to specific post in database
         likes = db.execute("SELECT likes FROM posts WHERE id=?", post)[0]["likes"]
         likes += 1
         print(likes)
         db.execute("UPDATE posts SET likes=? WHERE id=?", likes, post)
         return redirect("/feed")
     else:
-        posts = db.execute("SELECT posts.id as num,likes,post,time,username FROM posts,users WHERE posts.poster_id=users.id ORDER BY time,likes;")
+        # Displays posts
+        posts = db.execute("SELECT posts.id as num,likes,post,time,username FROM posts,users WHERE posts.poster_id=users.id ORDER BY time DESC,likes;")
         return render_template("feed.html", posts=posts)
-    
+
+# Allows user to make a post   
 @app.route("/make-post", methods=["GET", "POST"])
 @login_required
 def post():
     if request.method=="POST":
+        # Adds post to database
         text = request.form.get("post")
         if text == "None":
             return "Please type a valid post" 
         db.execute("INSERT INTO posts (poster_id, post, time) VALUES(?,?,?);", session["user_id"], text, datetime.now())
         return redirect("/feed")
     else:
+        # Gives space to input post
         return render_template("post.html")
 
 # Display User's Finance History
@@ -223,9 +230,9 @@ def add_entry():
             return "Please enter a valid amount"
         time = datetime.now()
 
-        if cause == "":
+        if cause == "None":
             return "Please fill out cause field!"
-        elif effect == "":
+        elif effect == "None":
             return "Please select one of the options!"
         elif int(amount) < 0:
             return "Please input a valid amount"
@@ -236,11 +243,6 @@ def add_entry():
     else:
         return render_template("add-entry.html")
 
-@app.route("/link_email")
-@login_required
-def link_email():
-    pass
-
 # Add Log out Functionality
 @app.route("/logout")
 @login_required
@@ -248,3 +250,15 @@ def logout():
     session.clear()
     return redirect("/")
 
+@app.route("/stocks", methods=["GET", "POST"])
+@login_required
+def stcks():
+    if request.method == "POST":
+        name = request.form.get("name")
+        try:
+            price = usd(current_price(name))
+        except:
+            return("Stock not found")
+        return render_template("stock-price.html", name=name, price=price)
+    else:
+        return render_template("stocks.html")

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}Stocks{% endblock %}
+
+{% block body %}
+    <div class="form">
+        <form action="/stocks" method="post">
+            <div class="form-group">
+                <label>Stock Name:</label>
+                <input name="name" required class="form-control" id="exampleFormControlInput1" placeholder="AAPL...">
+            </div>
+            <button type="submit" class="search btn btn-outline-primary">Search</button>
+        </form>
+    </div>
+{% endblock %}
